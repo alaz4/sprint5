@@ -1,11 +1,11 @@
 // Kategori için Union Type (sadece belirli string değerleri alabilir)
-export type Category = "Seminer" | "Atölye" | "Söyleşi" | "Yarışma" | "Konser";
+export type category = "Seminer" | "Atölye" | "Söyleşi" | "Yarışma" | "Konser";
 
 // Etkinlik nesnesinin tip tanımı (Interface)
 export interface CampusEvent {
   id: string;
   title: string;
-  category: Category;
+  category: category;
   capacity: number;
   date: string;
   time: string;
