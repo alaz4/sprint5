@@ -1,4 +1,4 @@
-import type { CampusEvent, Category } from "../types/campus-event";
+import type { CampusEvent } from "../types/campus-event";
 
 // 1. Başlık veya açıklamada metin arayan saf fonksiyon
 export function searchEvents(
@@ -15,12 +15,12 @@ export function searchEvents(
   });
 }
 
-// 2. Kategoriye göre filtreleyen saf fonksiyon
+// 2. Kategoriye göre filtreleyen saf fonksiyon (Category tipi yerine string esnekliği)
 export function filterByCategory(
   list: CampusEvent[],
-  category: Category | ""
+  category: string
 ): CampusEvent[] {
-  if (category === "") return list;
+  if (!category || category === "Tümü") return list;
   return list.filter((e) => e.category === category);
 }
 

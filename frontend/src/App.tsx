@@ -2,14 +2,13 @@ import { useState } from "react";
 import type { CampusEvent } from "./types/campus-event";
 import type { PageName } from "./types/page";
 
-import Header from "./components/layout/header";
-import Navigation from "./components/layout/navigation";
-import Footer from "./components/layout/footer";
-
-import EventFilter from "./components/events/eventFilter";
-import EventList from "./components/events/eventList";
-import EventDetail from "./components/events/eventDetail";
-import EventForm from "./components/forms/eventForm";
+import Header from "./components/layout/Header";
+import Navigation from "./components/layout/Navigation";
+import Footer from "./components/layout/Footer";
+import EventFilter from "./components/events/EventFilter";
+import EventList from "./components/events/EventList";
+import EventDetail from "./components/events/EventDetail";
+import EventForm from "./components/forms/EventForm";
 
 const INITIAL_EVENTS: CampusEvent[] = [
   {
@@ -20,7 +19,7 @@ const INITIAL_EVENTS: CampusEvent[] = [
     location: "Mühendislik Amfisi",
     category: "Akademik" as any,
     capacity: 150,
-    description: "Yapay zeka teknolojilerinin gelecekteki rolleri ve kariyer fırsatları konuşulacak.",
+    description: "Yapay zeka teknolojilerinin gelecekteki rolleri konuşulacak.",
     image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4"
   },
   {
@@ -31,7 +30,7 @@ const INITIAL_EVENTS: CampusEvent[] = [
     location: "Kampüs Meydanı",
     category: "Kültür / Sanat" as any,
     capacity: 500,
-    description: "Öğrenci gruplarının canlı performansları ve müzik dolu bir akşam.",
+    description: "Öğrenci gruplarının canlı performansları.",
     image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea"
   },
   {
@@ -42,7 +41,7 @@ const INITIAL_EVENTS: CampusEvent[] = [
     location: "Kapalı Spor Salonu",
     category: "Spor" as any,
     capacity: 300,
-    description: "Fakülteler arası basketbol turnuvasının şampiyonluk maçı.",
+    description: "Fakülteler arası şampiyonluk maçı.",
     image: "https://images.unsplash.com/photo-1546519638-68e109498ffc"
   }
 ];
@@ -70,14 +69,14 @@ function App() {
 
   return (
     <div className="app-container">
-      <Header title="🎓 Kampüs Etkinlikleri" text="Üniversitemizdeki tüm etkinlikler tek bir platformda!" />
-      <Navigation current={page} onNavigate={(nextPage) => go(nextPage)} />
+      <Header title="🎓 Kampüs Etkinlikleri" text="Üniversitemizdeki tüm etkinlikler!" />
+      <Navigation current={page} onNavigate={(nextPage: PageName) => go(nextPage)} />
 
       <main className="ana-icerik">
         {page === "home" && (
           <section className="sayfa-section">
             <h2>Öne Çıkan Etkinlikler</h2>
-            <EventList events={upcoming} onShowDetail={(id) => go("detail", id)} />
+            <EventList events={upcoming} onShowDetail={(id: string) => go("detail", id)} />
           </section>
         )}
 
@@ -92,7 +91,7 @@ function App() {
             />
             <EventList
               events={filteredEvents}
-              onShowDetail={(id) => go("detail", id)}
+              onShowDetail={(id: string) => go("detail", id)}
               emptyText="Arama kriterlerinize uygun etkinlik bulunamadı."
             />
           </section>
@@ -101,7 +100,7 @@ function App() {
         {page === "detail" && (
           <section className="sayfa-section">
             {selectedEvent ? (
-              <EventDetail event={selectedEvent} onBack={() => go("events")} onEdit={(id) => go("update", id)} />
+              <EventDetail event={selectedEvent} onBack={() => go("events")} onEdit={(id: string) => go("update", id)} />
             ) : (
               <p>Etkinlik bulunamadı.</p>
             )}
@@ -112,7 +111,7 @@ function App() {
           <section className="sayfa-section">
             <h2>{page === "add" ? "Yeni Etkinlik Ekle" : "Etkinlik Güncelle"}</h2>
             <EventForm
-              title={page === "add" ? "Formu doldurarak yeni etkinlik oluşturabilirsiniz." : "Etkinlik bilgilerini güncelleyebilirsiniz."}
+              title={page === "add" ? "Yeni etkinlik oluşturabilirsiniz." : "Etkinlik bilgilerini güncelleyebilirsiniz."}
               onSubmit={() => window.scrollTo(0, 0)}
             />
           </section>
