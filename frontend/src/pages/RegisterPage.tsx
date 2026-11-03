@@ -1,5 +1,4 @@
-import { useState, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useState, type FormEvent } from "react";import { Link } from "react-router-dom";
 
 interface RegisterErrors {
   name?: string;

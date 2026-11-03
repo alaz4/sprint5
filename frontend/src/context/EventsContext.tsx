@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import { events as initialEvents } from "../data/events";
+import { createContext, useContext, useState, type ReactNode } from "react";import { events as initialEvents } from "../data/events";
 
 export interface CampusEvent {
   id: string;

@@ -1,5 +1,4 @@
-import { useState, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useState, type FormEvent } from "react";import { Link } from "react-router-dom";
 
 function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

@@ -1,5 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { validateEvent, type EventFormErrors, type EventFormData } from "../../utils/validate-event";
+import { useState, type ChangeEvent, type FormEvent } from "react";import { validateEvent, type EventFormErrors, type EventFormData } from "../../utils/validate-event";
 
 interface EventFormProps {
   initialData?: EventFormData;
