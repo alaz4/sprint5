@@ -1,36 +1,37 @@
-import type { CampusEvent } from "../../types/campus-event";
-import { formatDate } from "../../utils/format-date";
+import { Link } from "react-router-dom";
+
+export interface CampusEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  category: string;
+  capacity?: number;
+  registeredCount?: number;
+}
 
 interface EventDetailProps {
   event: CampusEvent;
-  onBack: () => void;
-  onEdit: (id: string) => void;
 }
 
-function EventDetail({ event, onBack, onEdit }: EventDetailProps) {
+function EventDetail({ event }: EventDetailProps) {
   return (
-    <div className="detay-kart">
-      {event.image && (
-        <img
-          src={event.image}
-          alt={event.title}
-          style={{ width: "100%", maxHeight: "300px", objectFit: "cover", borderRadius: "8px", marginBottom: "15px" }}
-        />
-      )}
-      <h2>{event.title}</h2>
+    <div className="etkinlik-detay">
+      <p><strong>Açıklama:</strong> {event.description}</p>
+      <p><strong>Tarih:</strong> {event.date}</p>
+      <p><strong>Konum:</strong> {event.location}</p>
       <p><strong>Kategori:</strong> {event.category}</p>
-      <p><strong>Tarih & Saat:</strong> {formatDate(event.date)} - {event.time}</p>
-      <p><strong>Mekan:</strong> {event.location}</p>
-      <p><strong>Kontenjan:</strong> {event.capacity} Kişi</p>
-      <p>{event.description}</p>
-      
-      <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-        <button onClick={onBack} style={{ cursor: "pointer", padding: "8px 16px" }}>
-          ← Listeye Dön
-        </button>
-        <button onClick={() => onEdit(event.id)} style={{ cursor: "pointer", padding: "8px 16px" }}>
-          ✏️ Güncelle
-        </button>
+      {event.capacity !== undefined && <p><strong>Kontenjan:</strong> {event.capacity}</p>}
+      {event.registeredCount !== undefined && <p><strong>Kayıtlı Kişi:</strong> {event.registeredCount}</p>}
+
+      <div className="buton-grubu" style={{ marginTop: "1rem", display: "flex", gap: "10px" }}>
+        <Link to="/events" className="buton">
+          Listeye Dön
+        </Link>
+        <Link to={`/admin/${event.id}/edit`} className="buton">
+          Güncelle
+        </Link>
       </div>
     </div>
   );

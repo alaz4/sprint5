@@ -1,13 +1,7 @@
-interface HeaderProps {
-  title: string;
-  text?: string;
-}
-
-function Header({ title, text }: HeaderProps) {
+function Header() {
   return (
-    <header className="site-baslik">
-      <h1>{title}</h1>
-      {text && <p>{text}</p>}
+    <header className="header">
+      <h1>Kampüs Etkinlik Portalı</h1>
     </header>
   );
 }

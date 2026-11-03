@@ -1,124 +1,55 @@
-import { useState } from "react";
-import type { CampusEvent } from "./types/campus-event";
-import type { PageName } from "./types/page";
-
-import Header from "./components/layout/Header";
-import Navigation from "./components/layout/Navigation";
-import Footer from "./components/layout/Footer";
-import EventFilter from "./components/events/EventFilter";
-import EventList from "./components/events/EventList";
-import EventDetail from "./components/events/EventDetail";
-import EventForm from "./components/forms/EventForm";
-
-const INITIAL_EVENTS: CampusEvent[] = [
-  {
-    id: "1",
-    title: "Yapay Zeka ve Gelecek Konferansı",
-    date: "25-10-2026",
-    time: "14:00",
-    location: "Mühendislik Amfisi",
-    category: "Akademik" as any,
-    capacity: 150,
-    description: "Yapay zeka teknolojilerinin gelecekteki rolleri konuşulacak.",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4"
-  },
-  {
-    id: "2",
-    title: "Sonbahar Müzik Festivali",
-    date: "30-10-2026",
-    time: "18:30",
-    location: "Kampüs Meydanı",
-    category: "Kültür / Sanat" as any,
-    capacity: 500,
-    description: "Öğrenci gruplarının canlı performansları.",
-    image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea"
-  },
-  {
-    id: "3",
-    title: "Basketbol Turnuvası Finali",
-    date: "02-11-2026",
-    time: "16:00",
-    location: "Kapalı Spor Salonu",
-    category: "Spor" as any,
-    capacity: 300,
-    description: "Fakülteler arası şampiyonluk maçı.",
-    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc"
-  }
-];
+import { Routes, Route, NavLink } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import EventsPage from "./pages/EventsPage";
+import EventDetailPage from "./pages/EventDetailPage";
+import AdminPage from "./pages/AdminPage";
+import AddEventPage from "./pages/AddEventPage";
+import EditEventPage from "./pages/EditEventPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-  const [events] = useState<CampusEvent[]>(INITIAL_EVENTS);
-  const [page, setPage] = useState<PageName>("home");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Tümü");
-
-  const go = (targetPage: PageName, id: string | null = null) => {
-    setPage(targetPage);
-    setSelectedId(id);
-  };
-
-  const upcoming = events.slice(0, 2);
-  const filteredEvents = events.filter(
-    (e) =>
-      (e.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        e.description.toLowerCase().includes(searchText.toLowerCase())) &&
-      (selectedCategory === "Tümü" || e.category === selectedCategory)
-  );
-  const selectedEvent = events.find((e) => e.id === selectedId);
-
   return (
-    <div className="app-container">
-      <Header title="🎓 Kampüs Etkinlikleri" text="Üniversitemizdeki tüm etkinlikler!" />
-      <Navigation current={page} onNavigate={(nextPage: PageName) => go(nextPage)} />
+    <div className="sayfa-konteyner">
+      {/* Üst Header / Navigasyon Alanı */}
+      <header className="ust-alan">
+        <h1 className="ana-baslik">Kampüs Etkinlikleri</h1>
+        <p className="alt-baslik">
+          Farklı etkinlik, seminer ve söyleşileri tek yerden takip edin.
+        </p>
+        <nav className="navigasyon">
+          <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link aktif" : "nav-link")}>
+            Ana Sayfa
+          </NavLink>
+          <NavLink to="/events" className={({ isActive }) => (isActive ? "nav-link aktif" : "nav-link")}>
+            Etkinlikler
+          </NavLink>
+          <NavLink to="/admin" className={({ isActive }) => (isActive ? "nav-link aktif" : "nav-link")}>
+            Yönetim
+          </NavLink>
+          <NavLink to="/login" className={({ isActive }) => (isActive ? "nav-link aktif" : "nav-link")}>
+            Giriş
+          </NavLink>
+        </nav>
+      </header>
 
-      <main className="ana-icerik">
-        {page === "home" && (
-          <section className="sayfa-section">
-            <h2>Öne Çıkan Etkinlikler</h2>
-            <EventList events={upcoming} onShowDetail={(id: string) => go("detail", id)} />
-          </section>
-        )}
-
-        {page === "events" && (
-          <section className="sayfa-section">
-            <h2>Tüm Etkinlikler</h2>
-            <EventFilter
-              searchText={searchText}
-              selectedCategory={selectedCategory}
-              onSearchChange={setSearchText}
-              onCategoryChange={setSelectedCategory}
-            />
-            <EventList
-              events={filteredEvents}
-              onShowDetail={(id: string) => go("detail", id)}
-              emptyText="Arama kriterlerinize uygun etkinlik bulunamadı."
-            />
-          </section>
-        )}
-
-        {page === "detail" && (
-          <section className="sayfa-section">
-            {selectedEvent ? (
-              <EventDetail event={selectedEvent} onBack={() => go("events")} onEdit={(id: string) => go("update", id)} />
-            ) : (
-              <p>Etkinlik bulunamadı.</p>
-            )}
-          </section>
-        )}
-
-        {(page === "add" || page === "update") && (
-          <section className="sayfa-section">
-            <h2>{page === "add" ? "Yeni Etkinlik Ekle" : "Etkinlik Güncelle"}</h2>
-            <EventForm
-              title={page === "add" ? "Yeni etkinlik oluşturabilirsiniz." : "Etkinlik bilgilerini güncelleyebilirsiniz."}
-              onSubmit={() => window.scrollTo(0, 0)}
-            />
-          </section>
-        )}
+      {/* Sayfa İçerikleri */}
+      <main className="icerik-alani">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/new" element={<AddEventPage />} />
+          <Route path="/admin/:id/edit" element={<EditEventPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </main>
-
-      <Footer />
     </div>
   );
 }
