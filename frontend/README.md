@@ -1,7 +1,7 @@
 # Kampüs Etkinlikleri - Sprint 6 ve Vize Projesi
 
 ## 🚀 Canlı Vercel Adresi
-https://vercel.com/alaz4/alazborucu-frontend
+alazborucu-frontend.vercel.app
 
 ## 🛠️ Kurulum ve Çalıştırma
 Projeyi yerel ortamınızda çalıştırmak için:
