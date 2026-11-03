@@ -1,4 +1,4 @@
-import { Routes, Route, NavLink } from "react-router-dom";
+import { Routes, Route, NavLink, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import EventsPage from "./pages/EventsPage";
 import EventDetailPage from "./pages/EventDetailPage";
@@ -11,14 +11,45 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
+  const location = useLocation();
+
+  const getPageTitle = () => {
+    const path = location.pathname;
+
+    if (path === "/") return "Kampüs Etkinlikleri";
+    if (path === "/events") return "Etkinlikler";
+    if (path.startsWith("/events/")) return "Etkinlik Detayı";
+    if (path === "/admin") return "Etkinlik Yönetimi";
+    if (path === "/admin/new") return "Yeni Etkinlik Ekle";
+    if (path.includes("/edit")) return "Etkinlik Düzenle";
+    if (path === "/login") return "Giriş Yap";
+    if (path === "/register") return "Kayıt Ol";
+    if (path === "/forgot-password") return "Şifremi Unuttum";
+    
+    return "Sayfa Bulunamadı";
+  };
+
+  const getPageSubtitle = () => {
+    const path = location.pathname;
+
+    if (path === "/") {
+      return "Farklı etkinlik, seminer ve söyleşileri tek yerden takip edin.";
+    }
+    if (path === "/events") {
+      return "Ekim ayında kampüste düzenlenen etkinlikler.";
+    }
+    
+    return null;
+  };
+
+  const subtitle = getPageSubtitle();
+
   return (
     <div className="sayfa-konteyner">
       {/* Üst Header / Navigasyon Alanı */}
       <header className="ust-alan">
-        <h1 className="ana-baslik">Kampüs Etkinlikleri</h1>
-        <p className="alt-baslik">
-          Farklı etkinlik, seminer ve söyleşileri tek yerden takip edin.
-        </p>
+        <h1 className="ana-baslik">{getPageTitle()}</h1>
+        {subtitle && <p className="alt-baslik">{subtitle}</p>}
         <nav className="navigasyon">
           <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link aktif" : "nav-link")}>
             Ana Sayfa
@@ -50,6 +81,11 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+
+      {/* Alt Bilgi (Footer) Alanı */}
+      <footer className="alt-bilgi">
+        <p>&copy; Alaz Borucu - 2416501004 - 2026</p>
+      </footer>
     </div>
   );
 }
