@@ -1,105 +1,325 @@
 {
   "info": {
-    "name": "Kampüs API",
+    "name": "Kampüs API - Sprint 9",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "createdEventId",
+      "value": ""
+    }
+  ],
   "item": [
     {
       "name": "1. GET /health",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "2. GET /events (Tüm etkinlikler)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var res2 = pm.response.json();",
+              "pm.test('6 etkinlik döndü', function () { pm.expect(res2.length).to.eql(6); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/events"
+      }
+    },
+    {
+      "name": "3. GET /events/upcoming (Yaklaşan etkinlikler)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var res3 = pm.response.json();",
+              "pm.test('Geçmiş 2 etkinlik hariç 4 etkinlik döndü', function () { pm.expect(res3.length).to.eql(4); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/events/upcoming"
+      }
+    },
+    {
+      "name": "4. GET /events?search=atölye&category=Atölye",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var res4 = pm.response.json();",
+              "pm.test('Filtrelenen sonuçlar Atölye kategorisinde', function () {",
+              "  pm.expect(res4.length).to.be.above(0);",
+              "  res4.forEach(function (item) { pm.expect(item.category).to.eql('Atölye'); });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "url": {
-          "raw": "http://localhost:3000/health",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["health"]
+          "raw": "{{baseUrl}}/events?search=atölye&category=Atölye",
+          "host": ["{{baseUrl}}"],
+          "path": ["events"],
+          "query": [
+            { "key": "search", "value": "atölye" },
+            { "key": "category", "value": "Atölye" }
+          ]
         }
       }
     },
     {
-      "name": "2. GET /events",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:3000/events",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["events"]
+      "name": "5. POST /events (Yeni etkinlik oluştur)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+              "var res5 = pm.response.json();",
+              "pm.collectionVariables.set('createdEventId', res5.id);"
+            ],
+            "type": "text/javascript"
+          }
         }
-      }
-    },
-    {
-      "name": "3. GET /events/event-2",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:3000/events/event-2",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["events", "event-2"]
-        }
-      }
-    },
-    {
-      "name": "4. GET /events/yok",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:3000/events/yok",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["events", "yok"]
-        }
-      }
-    },
-    {
-      "name": "5. POST /events (tam body)",
+      ],
       "request": {
         "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Git Atölyesi\",\n  \"category\": \"Atölye\",\n  \"date\": \"2026-12-01\",\n  \"capacity\": 30\n}"
+          "raw": "{\n  \"title\": \"Bulut Bilişim ve Docker Atölyesi\",\n  \"category\": \"Atölye\",\n  \"date\": \"28-12-2026\",\n  \"location\": \"Mühendislik B-101\",\n  \"description\": \"Konteyner mimarisi ve mikroservis dağıtımı\",\n  \"capacity\": 40\n}"
         },
-        "url": {
-          "raw": "http://localhost:3000/events",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["events"]
-        }
+        "url": "{{baseUrl}}/events"
       }
     },
     {
-      "name": "6. POST /events (sadece title)",
+      "name": "6. POST /events (Eksik alan -> 400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
       "request": {
         "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Sadece Başlık\"\n}"
+          "raw": "{\n  \"title\": \"Sadece Başlık Var\"\n}"
         },
-        "url": {
-          "raw": "http://localhost:3000/events",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["events"]
+        "url": "{{baseUrl}}/events"
+      }
+    },
+    {
+      "name": "7. GET /events/:id (Oluşturulan etkinlik)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var res7 = pm.response.json();",
+              "pm.test('Başlık eşleşti', function () { pm.expect(res7.title).to.eql('Bulut Bilişim ve Docker Atölyesi'); });"
+            ],
+            "type": "text/javascript"
+          }
         }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "8. PATCH /events/:id (Kısmi güncelleme -> 200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var res8 = pm.response.json();",
+              "pm.test('Kapasite 55 ve başlık trimlendi', function () {",
+              "  pm.expect(res8.capacity).to.eql(55);",
+              "  pm.expect(res8.title).to.eql('Güncel Docker Atölyesi');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"capacity\": 55,\n  \"title\": \"  Güncel Docker Atölyesi  \"\n}"
+        },
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "9. PATCH /events/:id (Boş body -> 400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "10. PATCH /events/:id (Geçersiz kategori -> 400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": \"Parti\"\n}"
+        },
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "11. PATCH /events/:id (Korunan _id alanı -> 400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_id\": \"abc\"\n}"
+        },
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "12. DELETE /events/:id (Sil -> 204)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 204', function () { pm.response.to.have.status(204); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "13. DELETE /events/:id (Tekrar sil -> 404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/events/{{createdEventId}}"
+      }
+    },
+    {
+      "name": "14. GET /events/yok (Olmayan ID -> 404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/events/yok"
       }
     }
   ]
