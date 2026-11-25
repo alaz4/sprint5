@@ -1,44 +1,87 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { formatDate, parseDate } from '../utils/date';
+import { parseDate, formatDate } from '../utils/date';
 
-export const KATEGORILER = ['Atölye', 'Seminer', 'Kültür', 'Yarışma', 'Spor'] as const;
+export const KATEGORILER = [
+  'Konferans',
+  'Atölye',
+  'Konser',
+  'Seminer',
+  'Kulüp',
+  'Spor',
+  'Kültür',
+  'Yarışma',
+] as const;
 
 export interface IEvent extends Document {
   title: string;
-  category: string;
+  category: (typeof KATEGORILER)[number];
   date: Date;
+  time?: string;
   location: string;
-  description: string;
+  description?: string;
   capacity?: number;
 }
 
 const eventSchema = new Schema<IEvent>(
   {
-    title: { type: String, required: true, trim: true },
+    title: {
+      type: String,
+      required: [true, 'Başlık zorunludur'],
+      trim: true,
+      minlength: [3, 'Başlık en az 3 karakter olmalıdır'],
+    },
     category: {
       type: String,
-      required: true,
-      trim: true,
-      enum: KATEGORILER,
+      required: [true, 'Kategori zorunludur'],
+      enum: {
+        values: KATEGORILER,
+        message: '{VALUE} geçerli bir kategori değil',
+      },
     },
     date: {
       type: Date,
-      required: true,
-      set: parseDate,
-      get: formatDate,
+      required: [true, 'Tarih zorunludur'],
+      set: (val: unknown) => {
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+          const parsed = parseDate(val);
+          if (!parsed) {
+            throw new Error('Geçersiz tarih formatı. Beklenen: GG-AA-YYYY');
+          }
+          return parsed;
+        }
+        return val;
+      },
     },
-    location: { type: String, required: true, trim: true },
-    description: { type: String, required: true, trim: true },
-    capacity: { type: Number, min: 1, default: 100 },
+    time: {
+      type: String,
+      trim: true,
+      default: '14:00',
+    },
+    location: {
+      type: String,
+      required: [true, 'Konum zorunludur'],
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    capacity: {
+      type: Number,
+      min: [1, 'Kapasite en az 1 olmalıdır'],
+      default: 50,
+    },
   },
   {
     timestamps: true,
-    id: false,
     toJSON: {
-      getters: true,
-      transform: (_doc, ret: any) => {
-        ret.id = ret._id.toString();
-        delete ret._id;
+      transform(_doc, ret: any) {
+        ret.id = String(ret._id);
+        if (ret.date instanceof Date) {
+          ret.date = formatDate(ret.date);
+        }
         delete ret.__v;
         return ret;
       },
